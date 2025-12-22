@@ -70,3 +70,32 @@ SELECT * FROM "public.(表名)";
 # 退出
 \q
 ```
+
+
+## 2025-12-22
+如果重开服务器需要开启数据库服务，运行如下指令：
+```
+gs_ctl start -D /opt/opengauss/data/single_node
+```
+
+如果报错说内存不足这种，打开对应的配置文件，把下面几个参数进行修改：
+```
+vim /opt/opengauss/data/single_node/postgresql.conf
+
+shared_buffers = 128MB                  # min 128kB
+                                        # (change requires restart)
+bulk_write_ring_size = 256MB            # for bulkload, max shared_buffers
+#standby_shared_buffers_fraction = 0.3 #control shared buffers use in standby, 0.1-1.0
+#temp_buffers = 8MB                     # min 800kB
+max_prepared_transactions = 200         # zero disables the feature
+                                        # (change requires restart)
+# Note:  Increasing max_prepared_transactions costs ~600 bytes of shared memory
+# per transaction slot, plus lock space (see max_locks_per_transaction).
+# It is not advisable to set max_prepared_transactions nonzero unless you
+# actively intend to use prepared transactions.
+work_mem = 2MB                          # min 64kB
+maintenance_work_mem = 16MB             # min 1MB
+#max_stack_depth = 2MB                  # min 100kB
+
+cstore_buffers = 128MB
+```
