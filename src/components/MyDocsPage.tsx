@@ -76,10 +76,11 @@ const MyDocsPage: React.FC = () => {
         const fetchData = async () => {
             try {
                 const docs_res = await fetchDocs(userId)
-                console.log(docs_res)
+                // console.log(docs_res)
                 const docs = docs_res.docs
                 setDocs(docs)
                 const users_res = await fetchUsers()
+                // console.log(users_res)
                 const users = users_res.users
                 setAllUsers(users)
                 if (docs.length > 0) setSelectedDocId(docs[0].room_id ?? null)

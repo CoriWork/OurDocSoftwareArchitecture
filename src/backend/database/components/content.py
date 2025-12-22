@@ -1,5 +1,18 @@
 from database.base import db_cursor
 
+def get_user_name_by_id(user_id: str) -> str | None:
+    with db_cursor() as cur:
+        cur.execute(
+            """
+            SELECT user_name
+            FROM "user"
+            WHERE id = %s
+            """,
+            (user_id,)
+        )
+        row = cur.fetchone()
+        return row[0] if row else None
+
 
 # ---------------- 创建文档 ----------------
 def create_doc_dataset(
@@ -11,6 +24,8 @@ def create_doc_dataset(
     overall_permission,
     permission
 ):
+    # room_name = room_name + "_" + user_id
+    # print(room_name)
     try:
         with db_cursor() as cur:
             # 1️⃣ document 表
@@ -32,14 +47,6 @@ def create_doc_dataset(
                 (room_id, content)
             )
 
-            # 3️⃣ permission 表（创建者默认权限）
-            cur.execute(
-                """
-                INSERT INTO permission (room_id, user_id, permission)
-                VALUES (%s, %s, %s)
-                """,
-                (room_id, user_id, permission)
-            )
 
         return {
             "msg": "文档创建成功",

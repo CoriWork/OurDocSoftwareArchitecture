@@ -5,7 +5,8 @@ import zlib
 from database.components.content import (
     create_doc_dataset,
     get_content_dataset,
-    update_dataset
+    update_dataset,
+    get_user_name_by_id
 )
 
 content_bp = Blueprint("content", __name__)
@@ -25,10 +26,12 @@ def createdoc():
 
     room_name = data.get("room_name")
     user_id = data.get("user_id")
+    user_name = get_user_name_by_id(user_id)
 
     if not room_name or not user_id:
         return jsonify({"error": "room_name 和 user_id 不能为空"}), 400
 
+    room_name = room_name + "_" + user_name
     room_id = generate_room_id(room_name)
     create_time = datetime.now().strftime("%Y-%m-%d")
 

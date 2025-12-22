@@ -100,3 +100,7 @@ maintenance_work_mem = 16MB             # min 1MB
 
 cstore_buffers = 128MB
 ```
+
+
+
+现在修复了不同账号的创建功能，还有部分用户权限的设置功能。
