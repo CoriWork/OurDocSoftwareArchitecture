@@ -202,6 +202,7 @@ const MyDocsPage: React.FC = () => {
     }
 
     const setPermissionForSelectedUser = (userId: string, permission: 3 | 2) => {
+        console.log(permission)
         setSelectedUsersInModal((prev) =>
             prev.map((p) => (p.user.id === userId ? { ...p, permission } : p)),
         )
@@ -345,7 +346,7 @@ const MyDocsPage: React.FC = () => {
                     <Button
                         size="small"
                         type={record.permission === 2 ? 'primary' : 'default'}
-                        onClick={() => handleChangePermission(record.id, 3)}
+                        onClick={() => handleChangePermission(record.id, 2)}
                     >
                         只读
                     </Button>

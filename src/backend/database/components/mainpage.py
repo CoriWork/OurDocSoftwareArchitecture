@@ -44,7 +44,10 @@ def get_edit_permission_dataset(room_id, user_id):
             SELECT
                 CASE
                     WHEN d.owner_user_id = %s THEN 1
-                    WHEN p.permission >= 2 THEN 1
+                    WHEN d.overall_permission IN (1) THEN 1
+                    WHEN d.overall_permission = 3
+                         AND p.permission = 3
+                    THEN 1
                     ELSE 0
                 END
             FROM document d
@@ -67,8 +70,10 @@ def get_read_permission_dataset(room_id, user_id):
             SELECT
                 CASE
                     WHEN d.owner_user_id = %s THEN 1
-                    WHEN p.permission >= 1 THEN 1
-                    WHEN d.overall_permission >= 1 THEN 1
+                    WHEN d.overall_permission IN (1, 2) THEN 1
+                    WHEN d.overall_permission = 3
+                         AND p.permission IN (2, 3)
+                    THEN 1
                     ELSE 0
                 END
             FROM document d
