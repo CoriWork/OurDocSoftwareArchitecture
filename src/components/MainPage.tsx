@@ -366,6 +366,7 @@ const MainPage: React.FC = () => {
         window.location.href = "/login";
       }
     },
+    AIOpen,
     setAIOpen,
   };
 

@@ -10,7 +10,7 @@ import ReactMarkdown from "react-markdown";
 import { chatWithAI } from "../services/mainPage.ts";
 
 interface ContentWithEditorAndPreviewProps {
-  room_id: string;
+  room_id: string | null;
   editorText: string;
   showPreview: boolean;
   handleEditorMount: OnMount;
@@ -71,13 +71,10 @@ export const ContentWithEditorAndPreview: React.FC<
   const sendAiMessage = async () => {
     if (!aiInput.trim()) return;
 
-    const prompt = aiInput
+    const prompt = aiInput;
 
     // 1. 先把用户消息显示出来
-    setAiMessages((prev) => [
-      ...prev,
-      { role: "user", content: aiInput },
-    ]);
+    setAiMessages((prev) => [...prev, { role: "user", content: aiInput }]);
 
     setAiInput("");
 
@@ -96,6 +93,7 @@ export const ContentWithEditorAndPreview: React.FC<
         },
       ]);
     } catch (err) {
+      console.error("Error chatting with AI:", err);
       setAiMessages((prev) => [
         ...prev,
         {

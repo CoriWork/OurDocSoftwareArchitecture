@@ -19,11 +19,10 @@ interface GetContentData {
 }
 
 interface ChatAIParams {
-  room_id: string;
+  room_id: string | null;
   message: string;
   include_doc: boolean;
 }
-
 
 interface ChatAIResult {
   reply: string;
@@ -32,7 +31,6 @@ interface ChatAIResult {
 export const chatWithAI = (data: ChatAIParams): Promise<ChatAIResult> => {
   return request.post<ChatAIResult>("/ai/chat", data);
 };
-
 
 export const fetchRooms = (userid: string | undefined): Promise<Room[]> => {
   return request.get<Room[]>("/rooms", {
