@@ -18,6 +18,25 @@ SMTP_PASS = "eltsxxlfrvfobfei"
 # ⚠ Serverless 内存变量：冷启动会丢
 verify_codes = {}
 
+def send_email_code(to_email: str, code: str):
+    subject = "您的验证码"
+    content = f"您的验证码是：{code}，有效期 5 分钟，请不要泄露给他人。"
+
+    message = MIMEText(content, "plain", "utf-8")
+    message["From"] = formataddr(("系统邮件", SMTP_USER))
+    message["To"] = Header(to_email, "utf-8")
+    message["Subject"] = Header(subject, "utf-8")
+
+    try:
+        server = smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT)
+        server.login(SMTP_USER, SMTP_PASS)
+        server.sendmail(SMTP_USER, [to_email], message.as_string())
+        server.quit()
+        return True
+    except Exception as e:
+        print("发送邮件失败：", e)
+        return False
+    
 # ---------------- 发送验证码 ----------------
 @auth_bp.route("/send-code", methods=["POST"])
 def send_code():
@@ -31,6 +50,7 @@ def send_code():
     verify_codes[email] = code
 
     # TODO：生产环境应改为 Redis / OBS / DCS
+    send_email_code(email, code)
     print(f"[验证码] {email} -> {code}")
 
     return jsonify({"msg": "验证码已发送"})
