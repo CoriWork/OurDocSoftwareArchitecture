@@ -87,3 +87,18 @@ def get_read_permission_dataset(room_id, user_id):
 
         row = cur.fetchone()
         return row[0] if row else 0
+
+
+def get_room_content(room_id):
+    with db_cursor() as cur:
+        cur.execute(
+            """
+            SELECT content
+            FROM content
+            WHERE room_id = %s
+            """,
+            (room_id,)
+        )
+
+        row = cur.fetchone()
+        return row[0] if row else None

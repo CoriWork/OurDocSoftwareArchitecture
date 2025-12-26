@@ -7,8 +7,10 @@ import {
 } from "@ant-design/icons";
 import Editor, { type OnMount } from "@monaco-editor/react";
 import ReactMarkdown from "react-markdown";
+import { chatWithAI } from "../services/mainPage.ts";
 
 interface ContentWithEditorAndPreviewProps {
+  room_id: string;
   editorText: string;
   showPreview: boolean;
   handleEditorMount: OnMount;
@@ -25,6 +27,7 @@ interface AiMessage {
 export const ContentWithEditorAndPreview: React.FC<
   ContentWithEditorAndPreviewProps
 > = ({
+  room_id,
   editorText,
   showPreview,
   handleEditorMount,
@@ -65,25 +68,42 @@ export const ContentWithEditorAndPreview: React.FC<
   );
 
   /* -------------------- 发送 AI 消息 -------------------- */
-  const sendAiMessage = () => {
+  const sendAiMessage = async () => {
     if (!aiInput.trim()) return;
 
-    const prompt = includeDoc
-      ? `请参考以下文档内容回答问题：\n\n${editorText}\n\n问题：${aiInput}`
-      : aiInput;
+    const prompt = aiInput
 
+    // 1. 先把用户消息显示出来
     setAiMessages((prev) => [
       ...prev,
-      { role: "user", content: prompt },
-      {
-        role: "ai",
-        content: includeDoc
-          ? "（AI 已参考当前文档内容返回）"
-          : "（AI 未参考文档，仅基于提问返回）",
-      },
+      { role: "user", content: aiInput },
     ]);
 
     setAiInput("");
+
+    try {
+      const res = await chatWithAI({
+        room_id: room_id,
+        message: prompt,
+        include_doc: includeDoc,
+      });
+
+      setAiMessages((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          content: res.reply,
+        },
+      ]);
+    } catch (err) {
+      setAiMessages((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          content: " AI 服务暂时不可用",
+        },
+      ]);
+    }
   };
 
   return (
@@ -216,7 +236,7 @@ export const ContentWithEditorAndPreview: React.FC<
                               maxWidth: 240,
                             }}
                           >
-                            {item.content}
+                            <ReactMarkdown>{item.content}</ReactMarkdown>
                           </div>
                         </div>
                       </div>

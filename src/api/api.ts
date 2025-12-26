@@ -290,3 +290,24 @@ export const deleteRoom = async (roomId: string) => {
         throw err;
     }
 };
+
+
+// ai
+export const chatWithAI = async (params: {
+  room_id: string;
+  message: string;
+  include_doc: boolean;
+}) => {
+  try {
+    const res = await axios.post(`${BASE_URL}/ai/chat`, {
+      room_id: params.room_id,
+      message: params.message,
+      include_doc: params.include_doc,
+    });
+
+    return res.data;
+  } catch (err) {
+    console.error("chatWithAI error:", err);
+    throw err;
+  }
+};

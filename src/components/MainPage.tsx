@@ -314,6 +314,7 @@ const MainPage: React.FC = () => {
 
   // -------------------- content & header props --------------------
   const contentWithEditorAndPreviewProps = {
+    room_id: selectedRoom,
     editorText,
     showPreview,
     handleEditorMount,
